@@ -43,16 +43,23 @@ bool addArc(struct Graph* pGraph, char* pFrom, char* pTo, int pWeight) {
 
 	if(fromIndex == -1 || toIndex == -1) {
 		// Nodes not found
+		printf("Nodes not found\n");
 		return false;
 	}
 	else {
 		
 		if(pGraph->mNodes[fromIndex]->mArcListRoot == NULL) {
 			// Create new arc root
+			createRootArc(pGraph->mNodes[fromIndex], pGraph->mNodes[toIndex], pWeight);
+			printf("Created root arc\n");
+			return true;
 		}
 		else {
 			// Add new arc to list
 			// Update pointer in existing arc
+			createNewArc(pGraph->mNodes[fromIndex], pGraph->mNodes[toIndex], pWeight);
+			printf("Added new arc\n");
+			return true;
 		}
 	}
 }
