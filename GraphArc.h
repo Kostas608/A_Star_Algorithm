@@ -2,12 +2,14 @@
 #ifndef GRAPHARC_H
 #define GRAPHARC_H
 
+typedef struct GraphNode GraphNode;
+
 #include "GraphNode.h"
 
 struct GraphArc {
 	
 	// Node the arc points to
-	struct GraphNode* mNode;
+	GraphNode* mNode;
 	int mWeight;
 };
 

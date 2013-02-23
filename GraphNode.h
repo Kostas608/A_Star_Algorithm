@@ -2,6 +2,8 @@
 #ifndef GRAPHNODE_H
 #define GRAPHNODE_H
 
+typedef struct ArcListNode ArcListNode;
+
 #include "ArcList.h"
 
 typedef short bool;
@@ -14,11 +16,11 @@ struct GraphNode {
 	bool mMarked;
 	int xPos;
 	int yPos;
-	struct GraphNode* mPrevious;
-	struct ArcListNode* mArcListRoot;
+	GraphNode* mPrevious;
+	ArcListNode* mArcListRoot;
 };
 
-void initGraphNode(struct GraphNode* pNode, char* pData, int pX, int pY) {
+void initGraphNode(GraphNode* pNode, char* pData, int pX, int pY) {
 
 	pNode->mData = pData;
 	pNode->mMarked = false;
@@ -28,16 +30,16 @@ void initGraphNode(struct GraphNode* pNode, char* pData, int pX, int pY) {
 	pNode->yPos = pY;
 }
 
-void createNewArc(struct GraphNode* pFrom, struct GraphNode* pTo, int pWeight) {
+void createNewArc(GraphNode* pFrom, GraphNode* pTo, int pWeight) {
 	
-	struct ArcListNode* arcListIter = pFrom->mArcListRoot;
+	ArcListNode* arcListIter = pFrom->mArcListRoot;
 	
 	while(arcListIter->mNext != NULL) {
 		arcListIter = arcListIter->mNext;
 	}
 
-	struct ArcListNode* tempNode = malloc(sizeof *tempNode);
-	struct GraphArc* tempArc = malloc(sizeof *tempArc);
+	ArcListNode* tempNode = malloc(sizeof *tempNode);
+	GraphArc* tempArc = malloc(sizeof *tempArc);
 	
 	tempArc->mNode = pTo;
 	tempArc->mWeight = pWeight;
@@ -48,10 +50,10 @@ void createNewArc(struct GraphNode* pFrom, struct GraphNode* pTo, int pWeight) {
 	arcListIter->mNext = tempNode;
 }
 
-void createRootArc(struct GraphNode* pFrom, struct GraphNode* pTo, int pWeight) {
+void createRootArc(GraphNode* pFrom, GraphNode* pTo, int pWeight) {
 	
-	struct ArcListNode* tempNode = malloc(sizeof *tempNode);
-	struct GraphArc* tempArc = malloc(sizeof *tempArc);
+	ArcListNode* tempNode = malloc(sizeof *tempNode);
+	GraphArc* tempArc = malloc(sizeof *tempArc);
 	
 	tempArc->mNode = pTo;
 	tempArc->mWeight = pWeight;
