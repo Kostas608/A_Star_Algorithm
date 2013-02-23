@@ -1,49 +1,59 @@
-#pragma once
+
+#ifndef GRAPH_H
+#define GRAPH_H
 
 #include "GraphNode.h"
 
-struct Graph {
+typedef struct {
 	
 	int mNodeCount;
 	int mMaxNodes;
-	struct GraphNode* mNodes[10];
-};
+	struct GraphNode** mNodes;
+}Graph;
 
-void initGraph(struct Graph* pGraph, int pSize) {
+void initGraph(Graph* pGraph, int pSize) {
 	
 	pGraph->mNodeCount = 0;
 	pGraph->mMaxNodes = pSize;
+	pGraph->mNodes = malloc(pSize * sizeof *pGraph->mNodes);
 }
 
-bool addNode(struct Graph* pGraph, char* pData, int pIndex) {
+bool addNode(Graph* pGraph, char* pData, int pX, int pY, int pIndex) {
 
-	struct GraphNode* temp = malloc(sizeof *temp);
-	initGraphNode(temp, pData);
+	//if(pGraph->mNodes[pIndex] == NULL) {
+		struct GraphNode* temp = malloc(sizeof *temp);
+		initGraphNode(temp, pData, pX, pY);
 
-	pGraph->mNodes[pIndex] = temp;
-	pGraph->mNodeCount++;
-
-	//printf("%c", pGraph->mNodes[pIndex]->mData[0]);
+		pGraph->mNodes[pIndex] = temp;
+		pGraph->mNodeCount++;
+		//printf("%d", pIndex);
+		printf("Added node %s to graph\n", pData);
+		return true;
+	/*}
+	else {
+		printf("WARNING: Attempted to create node %s at index %d. Index already in use\n", pData, pIndex);
+		return false;
+	}*/
 }
 
-bool addArc(struct Graph* pGraph, char* pFrom, char* pTo, int pWeight) {
+bool addArc(Graph* pGraph, char pFrom, char pTo, int pWeight) {
 	
 	int fromIndex = -1;
 	int toIndex = -1;
 
 	int i;
 	for(i = 0; i < pGraph->mNodeCount; ++i) {
-		if(pGraph->mNodes[i]->mData == pFrom) {
+		if(*pGraph->mNodes[i]->mData == pFrom) {
 			fromIndex = i;
 		}
-		else if(pGraph->mNodes[i]->mData == pTo) {
+		else if(*pGraph->mNodes[i]->mData == pTo) {
 			toIndex = i;
 		}
 	}
 
 	if(fromIndex == -1 || toIndex == -1) {
 		// Nodes not found
-		printf("Nodes not found\n");
+		printf("WARNING: Attempted to create arc from nodes %c, to %c. One or more nodes not found\n", pFrom, pTo);
 		return false;
 	}
 	else {
@@ -51,16 +61,18 @@ bool addArc(struct Graph* pGraph, char* pFrom, char* pTo, int pWeight) {
 		if(pGraph->mNodes[fromIndex]->mArcListRoot == NULL) {
 			// Create new arc root
 			createRootArc(pGraph->mNodes[fromIndex], pGraph->mNodes[toIndex], pWeight);
-			printf("Created root arc\n");
+			printf("Created root arc at node %c, to node %c\n", pFrom, pTo);
 			return true;
 		}
 		else {
 			// Add new arc to list
 			// Update pointer in existing arc
 			createNewArc(pGraph->mNodes[fromIndex], pGraph->mNodes[toIndex], pWeight);
-			printf("Added new arc\n");
+			printf("Added new arc to node %c, to node %c\n", pFrom, pTo);
 			return true;
 		}
 	}
 }
+
+#endif
 

@@ -1,6 +1,8 @@
 default:
-	gcc main.c -o main
-
+	gcc Main.c -o main.exe
 
 clean:
-	-rm -f main
+	-rm -f main.exe
+
+run:
+	./main.exe

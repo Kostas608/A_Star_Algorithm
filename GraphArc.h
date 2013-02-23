@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef GRAPHARC_H
+#define GRAPHARC_H
 
 #include "GraphNode.h"
 
@@ -8,3 +10,5 @@ struct GraphArc {
 	struct GraphNode* mNode;
 	int mWeight;
 };
+
+#endif
