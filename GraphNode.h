@@ -32,6 +32,9 @@ void initGraphNode(GraphNode* pNode, char* pData, int pX, int pY) {
 	pNode->yPos = pY;
 	pNode->mCost = 500;
 	pNode->mCostToEnd = 500;
+
+	//pNode->mCost = 0;
+	//pNode->mCostToEnd = 0;
 }
 
 void createNewArc(GraphNode* pFrom, GraphNode* pTo, int pWeight) {
