@@ -1,5 +1,5 @@
 default:
-	gcc Main.c -o Astar
+	gcc Main.c -lm -o Astar
 
 clean:
 	-rm -f Astar

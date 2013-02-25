@@ -1,10 +1,24 @@
 NODES
-3
+9
 a 1 1
 b 2 2
 c 3 3
+d 4 4
+e 5 5
+f 6 6
+g 7 7
+h 8 8
+i 9 9
 EDGES
-3
+11
 a b 1
-a c 1
-c a 1
+a e 1
+a d 1
+e c 1
+e f 1
+d e 1
+d f 1
+f g 1
+c i 1
+g h 1
+h i 1

@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "Graph.h"
 
 void testGraphEdges(Graph* pGraph);
 void aStarSearch(Graph* pGraph, char* pTo, char* pFrom);
 void sortArray(GraphNode* pArray[], int pArraySize);
+int getStraightLineDist(GraphNode* pTo, GraphNode* pFrom);
+bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName);
 
 int main(int argc, char** argv) {
 
@@ -48,7 +51,8 @@ int main(int argc, char** argv) {
 	getline(&title, &len, fp);
 
 	getline(&edgeCount, &len, fp);
-	for(i = 0; i < (edgeCount[0]-'0'); i++) {
+	printf("%d", (int *)edgeCount -'0');
+	for(i = 0; i < (*edgeCount -'0'); i++) {
 
 		char* to = malloc(sizeof *to);
 		char* from = malloc(sizeof *from);;
@@ -60,7 +64,7 @@ int main(int argc, char** argv) {
 		addArc(mGraph, from, to, weight);
 	}
 
-	aStarSearch(mGraph, "c", "a");
+	aStarSearch(mGraph, "a", "i");
 	//testGraphEdges(mGraph);
 
 	fclose(fp);
@@ -68,53 +72,69 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void aStarSearch(Graph* pGraph, char* pTo, char* pFrom) {
+void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 
 	GraphNode* openList[pGraph->mNodeCount];
-	GraphNode* closedList[pGraph->mNodeCount];
 
 	int openListCount = 0;
-	int closedListCount = 0;
 
-	GraphNode* to;
-	GraphNode* from;
+	GraphNode* end;
+	GraphNode* start;
 
 	int i;
 	for(i = 0; i < pGraph->mNodeCount; ++i) {
-		if(strcmp( pGraph->mNodes[i]->mData, pFrom ) == 0) {
-			from = pGraph->mNodes[i];
+		if(strcmp( pGraph->mNodes[i]->mData, pStart ) == 0) {
+			start = pGraph->mNodes[i];
 		}
-		else if(strcmp( pGraph->mNodes[i]->mData, pTo ) == 0) {
-			to = pGraph->mNodes[i];
+		else if(strcmp( pGraph->mNodes[i]->mData, pEnd ) == 0) {
+			end = pGraph->mNodes[i];
 		}
 	}
 
-	openList[openListCount] = from;
+	printf("%s %s", start->mData, end->mData);
+
+	start->mCost = 0;
+	start->mCostToEnd = getStraightLineDist(start, end);
+
+	openList[openListCount] = start;
 	openListCount++;
 
 	while(openListCount != 0) {
 
-		GraphNode* tempNode = openList[0];
-		openListCount--;
-		closedList[closedListCount] = tempNode;
-		closedListCount++;
+		GraphNode* currentNode = openList[0];
 
-		ArcListNode* arcIter = tempNode->mArcListRoot;
+		if(currentNode->mData == end->mData) {
+			//Path found
+			printf("found");
+			return;
+		}
+
+		openListCount--;
+		currentNode->mMarked = true;
+
+		ArcListNode* arcIter = currentNode->mArcListRoot;
 		while(arcIter != NULL) {
 			
-			openList[openListCount] = arcIter->mArc->mNode;
-			openListCount++;
+			if(arcIter->mArc->mNode->mMarked == false) {
+
+				int cost = currentNode->mCost + getStraightLineDist(currentNode, arcIter->mArc->mNode);
+ 
+				if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == false) {
+
+					arcIter->mArc->mNode->mPrevious = currentNode;
+					arcIter->mArc->mNode->mCost = cost;
+					arcIter->mArc->mNode->mCostToEnd = getStraightLineDist(arcIter->mArc->mNode, end);
+
+					openList[openListCount] = arcIter->mArc->mNode;
+					openListCount++;
+				}
+			}
+
 			arcIter = arcIter->mNext;
 		}
 
 		sortArray(openList, openListCount);
 	}
-
-
-
-
-	//sortArray(openList, openListCount);
-	//printf("%s", openList[0]->mData);
 }
 
 void sortArray(GraphNode* pArray[], int pArraySize) {
@@ -138,6 +158,38 @@ void sortArray(GraphNode* pArray[], int pArraySize) {
 			}
 		}
 	}
+}
+
+int getStraightLineDist(GraphNode* pFrom, GraphNode* pTo) {
+
+	int distance = 0;
+
+	int x1=0;
+	int y1=0;
+	int x2=0;
+	int y2=0;
+
+
+	x1 = pFrom->xPos;
+	y1 = pFrom->yPos;
+	x2 = pTo->xPos;
+	y2 = pTo->yPos;
+
+	distance = sqrt( ((x2-x1)*(x2-x1)) + ((y2-y1)*(y2-y1)) );
+
+	return distance;
+}
+
+bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName) {
+
+	int i;
+	for(i = 0; i < pArraySize; ++i) {
+		if(pArray[i]->mData == pNodeName) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void testGraphEdges(Graph* pGraph) {
