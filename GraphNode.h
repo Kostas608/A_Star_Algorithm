@@ -16,6 +16,8 @@ struct GraphNode {
 	bool mMarked;
 	int xPos;
 	int yPos;
+	int mCost;
+	int mCostToEnd;
 	GraphNode* mPrevious;
 	ArcListNode* mArcListRoot;
 };
@@ -28,6 +30,8 @@ void initGraphNode(GraphNode* pNode, char* pData, int pX, int pY) {
 	pNode->mArcListRoot = NULL;
 	pNode->xPos = pX;
 	pNode->yPos = pY;
+	pNode->mCost = 0;
+	pNode->mCostToEnd = 0;
 }
 
 void createNewArc(GraphNode* pFrom, GraphNode* pTo, int pWeight) {

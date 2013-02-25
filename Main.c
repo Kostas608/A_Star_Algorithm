@@ -4,6 +4,8 @@
 #include "Graph.h"
 
 void testGraphEdges(Graph* pGraph);
+void aStarSearch(Graph* pGraph, char* pTo, char* pFrom);
+void sortArray(GraphNode* pArray[], int pArraySize);
 
 int main(int argc, char** argv) {
 
@@ -58,16 +60,89 @@ int main(int argc, char** argv) {
 		addArc(mGraph, from, to, weight);
 	}
 
-	testGraphEdges(mGraph);
+	aStarSearch(mGraph, "c", "a");
+	//testGraphEdges(mGraph);
 
 	fclose(fp);
 
 	return 0;
 }
 
+void aStarSearch(Graph* pGraph, char* pTo, char* pFrom) {
+
+	GraphNode* openList[pGraph->mNodeCount];
+	GraphNode* closedList[pGraph->mNodeCount];
+
+	int openListCount = 0;
+	int closedListCount = 0;
+
+	GraphNode* to;
+	GraphNode* from;
+
+	int i;
+	for(i = 0; i < pGraph->mNodeCount; ++i) {
+		if(strcmp( pGraph->mNodes[i]->mData, pFrom ) == 0) {
+			from = pGraph->mNodes[i];
+		}
+		else if(strcmp( pGraph->mNodes[i]->mData, pTo ) == 0) {
+			to = pGraph->mNodes[i];
+		}
+	}
+
+	openList[openListCount] = from;
+	openListCount++;
+
+	while(openListCount != 0) {
+
+		GraphNode* tempNode = openList[0];
+		openListCount--;
+		closedList[closedListCount] = tempNode;
+		closedListCount++;
+
+		ArcListNode* arcIter = tempNode->mArcListRoot;
+		while(arcIter != NULL) {
+			
+			openList[openListCount] = arcIter->mArc->mNode;
+			openListCount++;
+			arcIter = arcIter->mNext;
+		}
+
+		sortArray(openList, openListCount);
+	}
+
+
+
+
+	//sortArray(openList, openListCount);
+	//printf("%s", openList[0]->mData);
+}
+
+void sortArray(GraphNode* pArray[], int pArraySize) {
+
+	bool sorting = true;
+	
+	while(sorting) {
+
+		sorting = false;
+		int i;
+		for(i = 0; i < pArraySize; ++i) {
+			if(i+1 < pArraySize) {
+				if( (pArray[i+1]->mCost + pArray[i+1]->mCostToEnd) > (pArray[i]->mCost + pArray[i]->mCostToEnd) ) {
+					
+					GraphNode temp = *pArray[i+1];
+					*pArray[i+1] = *pArray[i];
+					*pArray[i] = temp;
+			
+					sorting = true;
+				}
+			}
+		}
+	}
+}
+
 void testGraphEdges(Graph* pGraph) {
 
-	printf("\n");
+	printf("\nEdge Tests:\n");
 	GraphNode* tempNode;
 
 	int i;

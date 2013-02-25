@@ -73,5 +73,17 @@ bool addArc(Graph* pGraph, char* pFrom, char* pTo, int pWeight) {
 	}
 }
 
+
+void resetGraph(Graph* pGraph) {
+
+	int i;
+	for(i = 0; i < pGraph->mNodeCount; i++) {
+		pGraph->mNodes[i]->mPrevious = NULL;
+		pGraph->mNodes[i]->mCost = 0;
+		pGraph->mNodes[i]->mCostToEnd = 0;
+	}
+}
+
+
 #endif
 

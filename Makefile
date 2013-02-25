@@ -1,8 +1,8 @@
 default:
-	gcc Main.c -o main.exe
+	gcc Main.c -o Astar
 
 clean:
-	-rm -f main.exe
+	-rm -f Astar
 
 run:
-	./main.exe
+	./Astar
