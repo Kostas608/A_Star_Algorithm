@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 
 
 	FILE * fp;
-	char* fileName = "graphData.txt";
+	char* fileName = "graphData2.txt";
 	char * line = NULL;
 	size_t len = 0;
 
@@ -30,21 +30,22 @@ int main(int argc, char** argv) {
 	int  xPos, yPos, weight;
 	char* nodeCount = malloc(sizeof *nodeCount);
 	char* edgeCount = malloc(sizeof *edgeCount);
+	char* pathCount = malloc(sizeof *pathCount);
 	char* title = malloc(sizeof *title);
 
 	getline(&title, &len, fp);
 	getline(&nodeCount, &len, fp);
 
-	initGraph(mGraph, (nodeCount[0]-'0'));
+	initGraph(mGraph, atoi(nodeCount));
 
 	int i;
-	for(i = 0; i < (nodeCount[0]-'0'); i++) {
+	for(i = 0; i < atoi(nodeCount); i++) {
 
 		char* nodePtr = malloc(sizeof *nodePtr);
 		getline(&line, &len, fp);
 		nodePtr = strdup(strtok (line," "));
-		xPos = strtok(NULL, " ")[0] - '0';
-		yPos = strtok(NULL, " ")[0] - '0';
+		xPos = atoi(strtok(NULL, " "));
+		yPos = atoi(strtok(NULL, " "));
 		
 		addNode(mGraph, nodePtr, xPos, yPos, i);
 	}
@@ -52,20 +53,36 @@ int main(int argc, char** argv) {
 	getline(&title, &len, fp);
 
 	getline(&edgeCount, &len, fp);
-	//printf("%d", (int *)edgeCount -'0');
-	for(i = 0; i < (edgeCount[0] -'0'); i++) {
+	
+	for(i = 0; i < atoi(edgeCount); i++) {
 
 		char* to = malloc(sizeof *to);
 		char* from = malloc(sizeof *from);;
 		getline(&line, &len, fp);
 		from = strdup(strtok (line," "));
 		to = strdup(strtok (NULL," "));
-		weight = strtok(NULL, " ")[0] - '0';
+		weight = atoi(strtok(NULL, " "));
 
 		addArc(mGraph, from, to, weight);
 	}
 
-	aStarSearch(mGraph, "a", "d");
+	getline(&title, &len, fp);
+
+	getline(&pathCount, &len, fp);
+
+	for(i = 0; i < atoi(pathCount); i++) {
+
+		char* to = malloc(sizeof *to);
+		char* from = malloc(sizeof *from);
+		getline(&line, &len, fp);
+		from = strdup(strtok (line," "));
+		to = strdup(strtok (NULL," "));
+		to[strcspn(to, "\n")] = '\0';
+
+		aStarSearch(mGraph, from, to);
+		resetGraph(mGraph);
+	}
+
 	//testGraphEdges(mGraph);
 
 	fclose(fp);
@@ -74,9 +91,8 @@ int main(int argc, char** argv) {
 }
 
 void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
-
+	
 	GraphNode* openList[pGraph->mNodeCount];
-
 	int openListCount = 0;
 
 	GraphNode* end;
@@ -92,8 +108,6 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 		}
 	}
 
-	//printf("%s %s", start->mData, end->mData);
-
 	start->mCost = 0;
 	start->mCostToEnd = getStraightLineDist(start, end);
 
@@ -103,19 +117,18 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 	while(openListCount != 0) {
 
 		GraphNode* currentNode = openList[0];
-		//printf("%s", currentNode->mData);
 		shiftArrayLeft(openList, pGraph->mNodeCount);
 		openListCount--;
-		
-		//
-		if(currentNode->mData == end->mData) {
-			//Path found
-			
+
+		if( strcmp(currentNode->mData, pEnd) == 0 ) {
+
+			//Path found	
+			printf("\nPath found from %s to %s:\n%s",pStart, pEnd, pEnd);
 			while(currentNode->mPrevious != NULL) {
 				printf("%s", currentNode->mPrevious->mData);
 				currentNode = currentNode->mPrevious;
 			}
-			printf("%s", end->mData);
+			printf("\n");
 			return;
 		}
 
@@ -125,8 +138,8 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 		while(arcIter != NULL) {
 			
 			if(arcIter->mArc->mNode->mMarked == false) {
-				
-				int cost = currentNode->mCost + arcIter->mArc->mNode->mCost;
+
+				int cost = currentNode->mCost + (getStraightLineDist(currentNode, arcIter->mArc->mNode)*arcIter->mArc->mWeight);
  
 				if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == false || cost < arcIter->mArc->mNode->mCost) {
 
@@ -139,12 +152,12 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 			}
 
 			arcIter = arcIter->mNext;
-			//currentNode = NULL;
-			//currentNode =  malloc(sizeof *currentNode);
 		}
 		
 		sortArray(openList, openListCount);
 	}
+
+	printf("\nNo path found from %s to %s\n",pStart, pEnd);
 }
 
 void sortArray(GraphNode* pArray[], int pArraySize) {
@@ -179,7 +192,6 @@ int getStraightLineDist(GraphNode* pFrom, GraphNode* pTo) {
 	int x2=0;
 	int y2=0;
 
-
 	x1 = pFrom->xPos;
 	y1 = pFrom->yPos;
 	x2 = pTo->xPos;
@@ -194,7 +206,7 @@ bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName) {
 
 	int i;
 	for(i = 0; i < pArraySize; ++i) {
-		if(pArray[i]->mData == pNodeName) {
+		if( strcmp(pArray[i]->mData, pNodeName) == 0 ) {
 			return true;
 		}
 	}
