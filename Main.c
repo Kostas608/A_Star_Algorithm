@@ -117,8 +117,9 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 	while(openListCount != 0) {
 
 		GraphNode* currentNode = openList[0];
-		shiftArrayLeft(openList, pGraph->mNodeCount);
+		shiftArrayLeft(openList, openListCount);
 		openListCount--;
+		currentNode->mMarked = true;
 
 		if( strcmp(currentNode->mData, pEnd) == 0 ) {
 
@@ -132,20 +133,18 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 			return;
 		}
 
-		currentNode->mMarked = true;
-
 		ArcListNode* arcIter = currentNode->mArcListRoot;
 		while(arcIter != NULL) {
 			
 			if(arcIter->mArc->mNode->mMarked == false) {
-
+				//printf("%s", currentNode->mData);
 				int cost = currentNode->mCost + (getStraightLineDist(currentNode, arcIter->mArc->mNode)*arcIter->mArc->mWeight);
  
 				if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == false || cost < arcIter->mArc->mNode->mCost) {
 
 					arcIter->mArc->mNode->mPrevious = currentNode;
 					arcIter->mArc->mNode->mCost = cost;
-					arcIter->mArc->mNode->mCostToEnd = getStraightLineDist(arcIter->mArc->mNode, end);
+					arcIter->mArc->mNode->mCostToEnd = cost + getStraightLineDist(arcIter->mArc->mNode, end);
 					openList[openListCount] = arcIter->mArc->mNode;
 					openListCount++;
 				}
@@ -153,7 +152,7 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 
 			arcIter = arcIter->mNext;
 		}
-		
+
 		sortArray(openList, openListCount);
 	}
 
@@ -220,6 +219,7 @@ void shiftArrayLeft(GraphNode* pArray[], int pArraySize) {
 	for(i = 0; i < pArraySize; ++i) {
 		if(i+1 < pArraySize) {
 			pArray[i] = pArray[i+1];
+			//printf("%s %s ", pArray[i]->mData, pArray[i+1]->mData);
 		}
 	}
 }

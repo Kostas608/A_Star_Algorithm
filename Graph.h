@@ -82,8 +82,8 @@ void resetGraph(Graph* pGraph) {
 		pGraph->mNodes[i]->mMarked = false;
 		pGraph->mNodes[i]->mCost = 500;
 		pGraph->mNodes[i]->mCostToEnd = 500;
-		pGraph->mNodes[i]->mCost = 0;
-		pGraph->mNodes[i]->mCostToEnd = 0;
+		//pGraph->mNodes[i]->mCost = 0;
+		//pGraph->mNodes[i]->mCostToEnd = 0;
 	}
 }
 
