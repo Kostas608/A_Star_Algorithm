@@ -25,19 +25,21 @@ int main(int argc, char** argv) {
 		exit(0);
 	}
 
-	Graph* mGraph = malloc(sizeof *mGraph);
-	
 	int  xPos, yPos, weight;
-	char* nodeCount = malloc(sizeof *nodeCount);
-	char* edgeCount = malloc(sizeof *edgeCount);
-	char* pathCount = malloc(sizeof *pathCount);
-	char* title = malloc(sizeof *title);
+	char* 	nodeCount 	= malloc(sizeof *nodeCount);
+	char* 	edgeCount 	= malloc(sizeof *edgeCount);
+	char* 	pathCount 	= malloc(sizeof *pathCount);
+	char* 	title 		= malloc(sizeof *title);
+	Graph* 	mGraph 		= malloc(sizeof *mGraph);
 
+	// Read line NODES from file
 	getline(&title, &len, fp);
+	// Read number of nodes from file
 	getline(&nodeCount, &len, fp);
-
+	// Init graph to size nodeCount
 	initGraph(mGraph, atoi(nodeCount));
 
+	// Add nodes to graph
 	int i;
 	for(i = 0; i < atoi(nodeCount); i++) {
 
@@ -50,10 +52,12 @@ int main(int argc, char** argv) {
 		addNode(mGraph, nodePtr, xPos, yPos, i);
 	}
 
+	// Read line EDGES from file
 	getline(&title, &len, fp);
-
+	// Read number of edges from file
 	getline(&edgeCount, &len, fp);
 	
+	// Add edges to graph nodes
 	for(i = 0; i < atoi(edgeCount); i++) {
 
 		char* to = malloc(sizeof *to);
@@ -66,10 +70,12 @@ int main(int argc, char** argv) {
 		addArc(mGraph, from, to, weight);
 	}
 
+	// Read line PATHS from file
 	getline(&title, &len, fp);
-
+	// Read number of paths from file
 	getline(&pathCount, &len, fp);
-
+	
+	// Test paths
 	for(i = 0; i < atoi(pathCount); i++) {
 
 		char* to = malloc(sizeof *to);
@@ -78,7 +84,7 @@ int main(int argc, char** argv) {
 		from = strdup(strtok (line," "));
 		to = strdup(strtok (NULL," "));
 		to[strcspn(to, "\n")] = '\0';
-
+		
 		aStarSearch(mGraph, from, to);
 		resetGraph(mGraph);
 	}
@@ -92,12 +98,14 @@ int main(int argc, char** argv) {
 
 void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 	
-	GraphNode* openList[pGraph->mNodeCount];
+	GraphNode** openList = NULL;
+	openList =  malloc(pGraph->mNodeCount *(sizeof *openList));
 	int openListCount = 0;
 
-	GraphNode* end;
-	GraphNode* start;
+	GraphNode* end = NULL;
+	GraphNode* start = NULL;
 
+	// Find start and end nodes
 	int i;
 	for(i = 0; i < pGraph->mNodeCount; ++i) {
 		if(strcmp( pGraph->mNodes[i]->mData, pStart ) == 0) {
@@ -107,23 +115,27 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 			end = pGraph->mNodes[i];
 		}
 	}
-
+	// Set costs of start node
 	start->mCost = 0;
 	start->mCostToEnd = getStraightLineDist(start, end);
 
+	// Add start node to the openList
 	openList[openListCount] = start;
 	openListCount++;
-
+	
 	while(openListCount != 0) {
 
+		// Remove top node from the open list
 		GraphNode* currentNode = openList[0];
 		shiftArrayLeft(openList, openListCount);
 		openListCount--;
+		// Mark node as visited
 		currentNode->mMarked = true;
 
+		// If currentNode is the end a path has been found
 		if( strcmp(currentNode->mData, pEnd) == 0 ) {
 
-			//Path found	
+			// Print path to terminal
 			printf("\nPath found from %s to %s:\n%s",pStart, pEnd, pEnd);
 			while(currentNode->mPrevious != NULL) {
 				printf("%s", currentNode->mPrevious->mData);
@@ -133,11 +145,11 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 			return;
 		}
 
+		// loop through all edges from current node
 		ArcListNode* arcIter = currentNode->mArcListRoot;
 		while(arcIter != NULL) {
 			
 			if(arcIter->mArc->mNode->mMarked == false) {
-				//printf("%s", currentNode->mData);
 				int cost = currentNode->mCost + (getStraightLineDist(currentNode, arcIter->mArc->mNode)*arcIter->mArc->mWeight);
  
 				if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == false || cost < arcIter->mArc->mNode->mCost) {
@@ -149,13 +161,13 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 					openListCount++;
 				}
 			}
-
+			
 			arcIter = arcIter->mNext;
 		}
 
 		sortArray(openList, openListCount);
 	}
-
+	
 	printf("\nNo path found from %s to %s\n",pStart, pEnd);
 }
 
@@ -171,9 +183,9 @@ void sortArray(GraphNode* pArray[], int pArraySize) {
 			if(i+1 < pArraySize) {
 				if( (pArray[i+1]->mCost + pArray[i+1]->mCostToEnd) < (pArray[i]->mCost + pArray[i]->mCostToEnd) ) {
 					
-					GraphNode temp = *pArray[i+1];
-					*pArray[i+1] = *pArray[i];
-					*pArray[i] = temp;
+					GraphNode* temp = pArray[i+1];
+					pArray[i+1] = pArray[i];
+					pArray[i] = temp;
 			
 					sorting = true;
 				}
@@ -219,7 +231,6 @@ void shiftArrayLeft(GraphNode* pArray[], int pArraySize) {
 	for(i = 0; i < pArraySize; ++i) {
 		if(i+1 < pArraySize) {
 			pArray[i] = pArray[i+1];
-			//printf("%s %s ", pArray[i]->mData, pArray[i+1]->mData);
 		}
 	}
 }
