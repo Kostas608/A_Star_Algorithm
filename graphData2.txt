@@ -32,5 +32,5 @@ f k 1
 k f 1
 PATHS
 2
-a f
+a i
 a i
