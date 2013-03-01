@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 
 
 	FILE * fp;
-	char* fileName = "graphData2.txt";
+	char* fileName = "graphData.txt";
 	char * line = NULL;
 	size_t len = 0;
 
