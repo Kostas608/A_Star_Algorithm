@@ -1,0 +1,37 @@
+NODES
+11
+a 1 2
+b 2 3
+c 4 3
+d 4 2
+e 6 1
+f 3 5
+g 5 5
+h 6 5
+i 6 6
+j 5 6
+k 1 6
+EDGES
+17
+a b 1
+b k 1
+b c 1
+c d 1
+c e 1
+e d 1
+d e 1
+c g 1
+g k 1
+h g 1
+j g 1
+g j 1
+i j 1
+j i 1
+c f 1
+f k 1
+k f 1
+PATHS
+2
+a i
+a i
+
