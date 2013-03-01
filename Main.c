@@ -11,6 +11,9 @@ int getStraightLineDist(GraphNode* pTo, GraphNode* pFrom);
 bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName);
 void shiftArrayLeft(GraphNode* pArray[], int pArraySize);
 
+/**
+* @brief Main. Creates graph from text file and tests paths
+*/
 int main(int argc, char** argv) {
 
 
@@ -96,6 +99,13 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
+/**
+* @brief Performs and A Star search of the graph and prints the shortest path (If found) to the terminal
+*
+* @param pGraph The graph to search
+* @param pStart The node at which to begin the search. 
+* @param pEnd The destination node 
+*/
 void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 	
 	GraphNode** openList = NULL;
@@ -171,6 +181,12 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 	printf("\nNo path found from %s to %s\n",pStart, pEnd);
 }
 
+/**
+* @brief Sorts array of nodes based on the nodes total cost
+*
+* @param pArray The array to sort
+* @param pArraySize the lenght of the array to be sorted
+*/
 void sortArray(GraphNode* pArray[], int pArraySize) {
 
 	bool sorting = true;
@@ -194,6 +210,12 @@ void sortArray(GraphNode* pArray[], int pArraySize) {
 	}
 }
 
+/**
+* @brief Gets the straight line distance between two nodes
+*
+* @param pFrom Node from which to begin
+* @param pTo Node at which to end
+*/
 int getStraightLineDist(GraphNode* pFrom, GraphNode* pTo) {
 
 	int distance = 0;
@@ -213,6 +235,13 @@ int getStraightLineDist(GraphNode* pFrom, GraphNode* pTo) {
 	return distance;
 }
 
+/**
+* @brief Checks if a node is present is an array
+*
+* @param pArray The array to search
+* @param pArraySize The size of the array to search
+* @param pNodeName The node to search for 
+*/
 bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName) {
 
 	int i;
@@ -225,6 +254,12 @@ bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName) {
 	return false;
 }
 
+/**
+* @brief Shifts all elements in the array one index left
+*
+* @param pArray The array to modify
+* @param pArraySize The size of the array
+*/
 void shiftArrayLeft(GraphNode* pArray[], int pArraySize) {
 
 	int i;
@@ -235,6 +270,11 @@ void shiftArrayLeft(GraphNode* pArray[], int pArraySize) {
 	}
 }
 
+/**
+* @brief Prints all graph connections to the terminal
+*
+* @param pGraph The graph to test 
+*/
 void testGraphEdges(Graph* pGraph) {
 
 	printf("\nEdge Tests:\n");
