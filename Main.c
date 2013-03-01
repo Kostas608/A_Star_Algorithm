@@ -273,7 +273,7 @@ void shiftArrayLeft(GraphNode* pArray[], int pArraySize) {
 /**
 * @brief Prints all graph connections to the terminal
 *
-* @param pGraph The graph to test 
+* @param pGraph The graph to test
 */
 void testGraphEdges(Graph* pGraph) {
 
