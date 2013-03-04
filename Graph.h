@@ -54,7 +54,7 @@ bool addNode(Graph* pGraph, char* pData, int pX, int pY, int pIndex) {
 
 		pGraph->mNodes[pIndex] = temp;
 		pGraph->mNodeCount++;
-		printf("Added node %s to graph\n", pData);
+		//printf("Added node %s to graph\n", pData);
 		return true;
 	}
 	else {
@@ -96,21 +96,21 @@ bool addArc(Graph* pGraph, char* pFrom, char* pTo, int pWeight) {
 		if(pGraph->mNodes[fromIndex]->mArcListRoot == NULL) {
 			// Create new arc root
 			createRootArc(pGraph->mNodes[fromIndex], pGraph->mNodes[toIndex], pWeight);
-			printf("Created root arc at node %s, to node %s\n", pFrom, pTo);
+			//printf("Created root arc at node %s, to node %s\n", pFrom, pTo);
 			return true;
 		}
 		else {
 			// Add new arc to list
 			// Update pointer in existing arc
 			createNewArc(pGraph->mNodes[fromIndex], pGraph->mNodes[toIndex], pWeight);
-			printf("Added new arc to node %s, to node %s\n", pFrom, pTo);
+			//printf("Added new arc to node %s, to node %s\n", pFrom, pTo);
 			return true;
 		}
 	}
 }
 
 /**
-* @brief Resets the node in the graph to their initial values
+* @brief Resets the nodes in the graph to their initial values
 *
 * @param pGraph The graph to reset
 */

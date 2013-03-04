@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 
 
 	FILE * fp;
-	char* fileName = "graphData.txt";
+	char* fileName = "graphData2.txt";
 	char * line = NULL;
 	size_t len = 0;
 
@@ -162,13 +162,31 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 			if(arcIter->mArc->mNode->mMarked == false) {
 				int cost = currentNode->mCost + (getStraightLineDist(currentNode, arcIter->mArc->mNode)*arcIter->mArc->mWeight);
  
-				if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == false || cost < arcIter->mArc->mNode->mCost) {
+				if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == false /*|| cost < arcIter->mArc->mNode->mCost*/) {
 
 					arcIter->mArc->mNode->mPrevious = currentNode;
 					arcIter->mArc->mNode->mCost = cost;
 					arcIter->mArc->mNode->mCostToEnd = cost + getStraightLineDist(arcIter->mArc->mNode, end);
 					openList[openListCount] = arcIter->mArc->mNode;
 					openListCount++;
+				}
+				else if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == true) {
+					// Check costs and update if new cost is lower
+					
+					for(i = 0; i < openListCount; i++) {
+						
+						if( strcmp(arcIter->mArc->mNode->mData, openList[i]->mData) == 0) {
+
+							if(arcIter->mArc->mNode->mCost + arcIter->mArc->mNode->mCostToEnd < openList[i]->mCost + openList[i]->mCostToEnd) {
+
+								arcIter->mArc->mNode->mPrevious = currentNode;
+								arcIter->mArc->mNode->mCost = cost;
+								arcIter->mArc->mNode->mCostToEnd = cost + getStraightLineDist(arcIter->mArc->mNode, end);
+								openList[openListCount] = arcIter->mArc->mNode;
+								openListCount++;
+							}
+						}		
+					}
 				}
 			}
 			
