@@ -5,7 +5,7 @@
 #include "Graph.h"
 
 void testGraphEdges(Graph* pGraph);
-void aStarSearch(Graph* pGraph, char* pTo, char* pFrom);
+void aStarSearch(Graph* pGraph, char* pTo, char* pFrom, GraphNode** pPath);
 void sortArray(GraphNode* pArray[], int pArraySize);
 float getStraightLineDist(GraphNode* pTo, GraphNode* pFrom);
 bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName);
@@ -82,6 +82,8 @@ int main(int argc, char** argv) {
 	// Read number of paths from file
 	getline(&pathCount, &len, fp);
 	
+	GraphNode** path;
+	
 	// Test paths
 	for(i = 0; i < atoi(pathCount); i++) {
 
@@ -92,7 +94,7 @@ int main(int argc, char** argv) {
 		to = strdup(strtok (NULL," "));
 		to[strcspn(to, "\n")] = '\0';
 		
-		aStarSearch(mGraph, from, to);
+		aStarSearch(mGraph, from, to, path);
 		resetGraph(mGraph);
 	}
 
@@ -110,7 +112,7 @@ int main(int argc, char** argv) {
 * @param pStart The node at which to begin the search. 
 * @param pEnd The destination node 
 */
-void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
+void aStarSearch(Graph* pGraph, char* pStart, char* pEnd, GraphNode** pPath) {
 
 	GraphNode** openList = NULL;
 	openList =  malloc(pGraph->mNodeCount *(sizeof *openList));
@@ -149,13 +151,27 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 		// If currentNode is the end a path has been found
 		if( strcmp(currentNode->mData, pEnd) == 0 ) {
 
+			pPath = malloc(pGraph->mNodeCount * (sizeof *pGraph->mNodes));
+			int index = 1;
+			pPath[0] = end;
 			// Print path to terminal
 			printf("\nPath found from %s to %s:\n%s",pStart, pEnd, pEnd);
 			while(currentNode->mPrevious != NULL) {
 				printf("%s", currentNode->mPrevious->mData);
 				currentNode = currentNode->mPrevious;
+				pPath[index] = currentNode;
+				index++;
 			}
+			pPath[index] = start;
 			printf("\n");
+
+			/*index = 0;
+			while(pPath[index]->mPrevious != NULL) {
+				printf("%s", pPath[index]->mData);
+				index++;
+			}
+			printf("%s", pPath[index]->mData);*/
+
 			return;
 		}
 
