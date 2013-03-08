@@ -5,7 +5,7 @@
 #include "Graph.h"
 
 void testGraphEdges(Graph* pGraph);
-void aStarSearch(Graph* pGraph, char* pTo, char* pFrom, GraphNode** pPath);
+GraphNode** aStarSearch(Graph* pGraph, char* pTo, char* pFrom);
 void sortArray(GraphNode* pArray[], int pArraySize);
 float getStraightLineDist(GraphNode* pTo, GraphNode* pFrom);
 bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName);
@@ -94,7 +94,18 @@ int main(int argc, char** argv) {
 		to = strdup(strtok (NULL," "));
 		to[strcspn(to, "\n")] = '\0';
 		
-		aStarSearch(mGraph, from, to, path);
+		path = aStarSearch(mGraph, from, to);
+
+		// Print the path
+		if(path != NULL) {		
+			int index = 0;
+			while(path[index]->mPrevious != NULL) {
+				printf("%s", path[index]->mData);
+				index++;
+			}
+			printf("%s\n", path[index]->mData);
+		}
+
 		resetGraph(mGraph);
 	}
 
@@ -112,7 +123,7 @@ int main(int argc, char** argv) {
 * @param pStart The node at which to begin the search. 
 * @param pEnd The destination node 
 */
-void aStarSearch(Graph* pGraph, char* pStart, char* pEnd, GraphNode** pPath) {
+GraphNode** aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 
 	GraphNode** openList = NULL;
 	openList =  malloc(pGraph->mNodeCount *(sizeof *openList));
@@ -151,28 +162,19 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd, GraphNode** pPath) {
 		// If currentNode is the end a path has been found
 		if( strcmp(currentNode->mData, pEnd) == 0 ) {
 
-			pPath = malloc(pGraph->mNodeCount * (sizeof *pGraph->mNodes));
+			// Place path nodes in an array and return it
+			GraphNode** path = malloc(pGraph->mNodeCount * (sizeof *pGraph->mNodes));
 			int index = 1;
-			pPath[0] = end;
-			// Print path to terminal
-			printf("\nPath found from %s to %s:\n%s",pStart, pEnd, pEnd);
+			path[0] = end;
+			printf("\nPath found from %s to %s:\n",pStart, pEnd);
 			while(currentNode->mPrevious != NULL) {
-				printf("%s", currentNode->mPrevious->mData);
 				currentNode = currentNode->mPrevious;
-				pPath[index] = currentNode;
+				path[index] = currentNode;
 				index++;
 			}
-			pPath[index] = start;
-			printf("\n");
+			path[index] = start;
 
-			/*index = 0;
-			while(pPath[index]->mPrevious != NULL) {
-				printf("%s", pPath[index]->mData);
-				index++;
-			}
-			printf("%s", pPath[index]->mData);*/
-
-			return;
+			return path;
 		}
 
 		// loop through all edges from current node
@@ -222,6 +224,7 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd, GraphNode** pPath) {
 	}
 	
 	printf("\nNo path found from %s to %s\n",pStart, pEnd);
+	return NULL;
 }
 
 /**
