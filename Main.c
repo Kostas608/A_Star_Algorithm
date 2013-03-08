@@ -7,7 +7,7 @@
 void testGraphEdges(Graph* pGraph);
 void aStarSearch(Graph* pGraph, char* pTo, char* pFrom);
 void sortArray(GraphNode* pArray[], int pArraySize);
-int getStraightLineDist(GraphNode* pTo, GraphNode* pFrom);
+float getStraightLineDist(GraphNode* pTo, GraphNode* pFrom);
 bool isNodeInArray(GraphNode* pArray[], int pArraySize, char* pNodeName);
 void shiftArrayLeft(GraphNode* pArray[], int pArraySize);
 
@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
 * @param pEnd The destination node 
 */
 void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
-	
+
 	GraphNode** openList = NULL;
 	openList =  malloc(pGraph->mNodeCount *(sizeof *openList));
 	int openListCount = 0;
@@ -159,9 +159,12 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 		ArcListNode* arcIter = currentNode->mArcListRoot;
 		while(arcIter != NULL) {
 			
+			// If node is not in closed list
 			if(arcIter->mArc->mNode->mMarked == false) {
-				int cost = currentNode->mCost + (getStraightLineDist(currentNode, arcIter->mArc->mNode)*arcIter->mArc->mWeight);
+
+				float cost = currentNode->mCost + (getStraightLineDist(currentNode, arcIter->mArc->mNode)*arcIter->mArc->mWeight);
  
+				// If node is not in open list
 				if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == false /*|| cost < arcIter->mArc->mNode->mCost*/) {
 
 					arcIter->mArc->mNode->mPrevious = currentNode;
@@ -171,25 +174,27 @@ void aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 					openListCount++;
 				}
 				else if(isNodeInArray(openList, openListCount, arcIter->mArc->mNode->mData) == true) {
-					// Check costs and update if new cost is lower
-					
+					// If the node is in the open list
+					// Find the index of the node
+					int index = -1;
 					for(i = 0; i < openListCount; i++) {
-						
 						if( strcmp(arcIter->mArc->mNode->mData, openList[i]->mData) == 0) {
-
-							if(arcIter->mArc->mNode->mCost + arcIter->mArc->mNode->mCostToEnd < openList[i]->mCost + openList[i]->mCostToEnd) {
-
-								arcIter->mArc->mNode->mPrevious = currentNode;
-								arcIter->mArc->mNode->mCost = cost;
-								arcIter->mArc->mNode->mCostToEnd = cost + getStraightLineDist(arcIter->mArc->mNode, end);
-								openList[openListCount] = arcIter->mArc->mNode;
-								openListCount++;
-							}
-						}		
+							index = i;
+						}
 					}
+			
+					if(index != -1) {
+						// Check costs and update if new cost is lower
+						if(cost < openList[index]->mCost) {
+
+							openList[index]->mPrevious = currentNode;
+							openList[index]->mCost = cost;
+							openList[index]->mCostToEnd = cost + getStraightLineDist(arcIter->mArc->mNode, end);
+						}		
+					}		
 				}
 			}
-			
+			// Get next edge
 			arcIter = arcIter->mNext;
 		}
 
@@ -234,9 +239,9 @@ void sortArray(GraphNode* pArray[], int pArraySize) {
 * @param pFrom Node from which to begin
 * @param pTo Node at which to end
 */
-int getStraightLineDist(GraphNode* pFrom, GraphNode* pTo) {
+float getStraightLineDist(GraphNode* pFrom, GraphNode* pTo) {
 
-	int distance = 0;
+	float distance = 0;
 
 	int x1=0;
 	int y1=0;

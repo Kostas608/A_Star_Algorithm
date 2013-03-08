@@ -34,11 +34,11 @@ struct GraphNode {
 	/**
 	* @brief The cost to get to this node
 	*/
-	int mCost;
+	float mCost;
 	/**
 	* @brief The cost to get from this node to the destination
 	*/
-	int mCostToEnd;
+	float mCostToEnd;
 	/**
 	* @brief Pointer to previous node visited
 	*/
