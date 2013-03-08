@@ -122,6 +122,7 @@ int main(int argc, char** argv) {
 * @param pGraph The graph to search
 * @param pStart The node at which to begin the search. 
 * @param pEnd The destination node 
+* @return GraphNode** The path found or NULL if no path was found
 */
 GraphNode** aStarSearch(Graph* pGraph, char* pStart, char* pEnd) {
 
@@ -266,15 +267,10 @@ float getStraightLineDist(GraphNode* pFrom, GraphNode* pTo) {
 
 	float distance = 0;
 
-	int x1=0;
-	int y1=0;
-	int x2=0;
-	int y2=0;
-
-	x1 = pFrom->xPos;
-	y1 = pFrom->yPos;
-	x2 = pTo->xPos;
-	y2 = pTo->yPos;
+	int x1 = pFrom->xPos;
+	int y1 = pFrom->yPos;
+	int x2 = pTo->xPos;
+	int y2 = pTo->yPos;
 
 	distance = sqrt( ((x2-x1)*(x2-x1)) + ((y2-y1)*(y2-y1)) );
 
