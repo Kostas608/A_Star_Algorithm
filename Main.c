@@ -16,6 +16,10 @@ void shiftArrayLeft(GraphNode* pArray[], int pArraySize);
 */
 int main(int argc, char** argv) {
 
+	/*printf("Enter name of data file:\n");
+
+	char strvar[100];
+	fgets (strvar, 100, stdin);*/
 
 	FILE * fp;
 	char* fileName = "graphData2.txt";

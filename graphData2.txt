@@ -34,8 +34,8 @@ n m 1
 n o 1
 i k 1
 h k 1
-k l 1
-k j 1
+k l 100
+k j 100
 m q 1
 m o 1
 l p 1
@@ -49,6 +49,6 @@ h i 1
 h m 1
 PATHS
 3
-a p
 a l
-a m
+a p
+a q
